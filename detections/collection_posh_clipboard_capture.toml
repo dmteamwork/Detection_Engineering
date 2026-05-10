@@ -154,7 +154,7 @@ value = "?:\\\\Program?Files\\\\WindowsPowerShell\\\\Modules\\\\*.ps?1"
 [[rule.threat]]
 framework = "MITRE ATT&CK"
 [[rule.threat.technique]]
-id = "T1116"
+id = "T1115"
 name = "Clipboard Data"
 reference = "https://attack.mitre.org/techniques/T1115/"
 
