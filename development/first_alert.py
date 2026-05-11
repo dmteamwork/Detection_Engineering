@@ -104,7 +104,7 @@ import os
 import tomllib
 import json
 
-BASE_URL = "https://my-deployment-596fe6.kb.europe-west1.gcp.cloud.es.io"
+BASE_URL = "https://my-deployment-596fe6.kb.europe-west1.gcp.cloud.es.io/api/detection_engine/rules"
 api_key  = os.environ['ELASTIC_KEY']
 
 headers = {
