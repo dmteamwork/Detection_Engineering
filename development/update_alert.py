@@ -4,7 +4,7 @@ import tomllib
 import json
 
 BASE_URL = "https://my-deployment-596fe6.kb.europe-west1.gcp.cloud.es.io"
-api_key  = "NHF5UkNwNEJTX3RNbGFPTFc1dEs6aDdmMnpmNUFzNXZWMUlUWEEzdG1jUQ=="
+api_key  = os.environ['ELASTIC_KEY']
 
 headers = {
     "Authorization": f"ApiKey {api_key}",
@@ -85,7 +85,7 @@ def push_rule(payload: dict, filename: str):
 
 
 # ── Main ──────────────────────────────────────────────────────────────────────
-detection_dir = "/home/kali/Desktop/AttackS/toml/converted_detection"
+detection_dir = "/home/kali/Desktop/AttackS/vs_code_toml_elastic"
 
 for root, dirs, files in os.walk(detection_dir):
     for file in files:
