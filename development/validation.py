@@ -10,7 +10,7 @@ REQUIRED_BY_TYPE = {
     "threshold": ['description', 'name', 'risk_score', 'severity', 'type', 'query', 'threshold'],
 }
 
-for root, dirs, files in os.walk("/home/kali/Desktop/AttackS/vs_code_toml_elastic/detection_engineering"):
+for root, dirs, files in os.walk("/home/kali/Desktop/AttackS/vs_code_toml_elastic"):
     for file in files:
         if not file.endswith(".toml"):
             continue
