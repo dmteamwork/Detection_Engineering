@@ -129,9 +129,10 @@ def build_payload(rule: dict) -> dict | None:
         "threat":      rule.get("threat", []),
         "author":      rule.get("author", []),
         "type":        rule_type,
-        "index":       rule.get("index", ["*"]),
+        "index": rule.get("index", {}).get("indices", ["*"]),
         "interval":    rule.get("interval", "5m"),
         "from":        rule.get("from", "now-6m"),
+        "alert_suppression": rule.get("alert_suppression", {}),
     }
 
     if rule_type == "query":
@@ -173,7 +174,7 @@ def push_rule(payload: dict, filename: str):
 
 
 # ── Main ──────────────────────────────────────────────────────────────────────
-detection_dir = "/home/kali/Desktop/AttackS/vs_code_toml_elastic"
+detection_dir = "/home/kali/Desktop/AttackS/vs_code_toml_elastic/detection_engineering/detections"
 
 for root, dirs, files in os.walk(detection_dir):
     for file in files:
