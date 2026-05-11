@@ -22,4 +22,5 @@ jobs:
       - uses: actions/checkout@v6
 
       - run: python development/toml-to-json.py
+      - run: pip install requests
       

@@ -23,6 +23,7 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v6
 
+      - run: pip install requests
       - run: python development/validation.py
       - run: python development/mitre.py
       
