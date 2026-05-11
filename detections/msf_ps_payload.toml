@@ -1,0 +1,45 @@
+[rule]
+id = "de82977b-e182-44da-90c4-deed874eaacf"
+rule_id = "8c862c3b-06d2-416a-913f-45b516a3bb8a"
+name = "MSF ps payload"
+description = "MSF ps payload"
+enabled = false
+type = "query"
+language = "kuery"
+severity = "low"
+risk_score = 21
+interval = "5m"
+from = "now-10m"
+to = "now"
+max_signals = 100
+query = """event.dataset : "windows.sysmon_operational" and process.command_line :"\"cmd.exe\"" and message : "*powershell -w hidden -nop -c *""""
+version = 1
+created_at = "2026-05-05T13:48:53.423Z"
+updated_at = "2026-05-07T21:07:57.393Z"
+
+[rule.index]
+indices = ["apm-*-transaction*", "auditbeat-*", "endgame-*", "filebeat-*", "logs-*", "packetbeat-*", "traces-apm*", "winlogbeat-*", "-*elastic-cloud-logs-*"]
+
+[rule.alert_suppression]
+group_by = ["host.hostname"]
+duration_value = 5
+duration_unit = "m"
+missing_fields_strategy = "suppress"
+
+[[rule.threat]]
+framework = "MITRE ATT&CK"
+
+[rule.threat.tactic]
+id = "TA0002"
+name = "Execution"
+reference = "https://attack.mitre.org/tactics/TA0002/"
+
+[[rule.threat.technique]]
+id = "T1059"
+name = "Command and Scripting Interpreter"
+reference = "https://attack.mitre.org/techniques/T1059/"
+
+[[rule.threat.technique.subtechnique]]
+id = "T1059.001"
+name = "PowerShell"
+reference = "https://attack.mitre.org/techniques/T1059/001/"

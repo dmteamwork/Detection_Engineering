@@ -1,0 +1,40 @@
+[rule]
+id = "4d1fbf42-0f29-419a-a4d4-bff9765bb8a6"
+rule_id = "220f58b4-5f8c-42d5-852c-274ae9315619"
+name = "Universal Scanner Behavior Rule"
+description = "This catches ANY scanner (Nikto, ZAP, Nmap , etc)"
+enabled = false
+type = "query"
+language = "kuery"
+severity = "low"
+risk_score = 21
+interval = "2m"
+from = "now-7m"
+to = "now"
+max_signals = 100
+query = """(event.dataset: ("zeek.http") and http.response.status_code >= 400) or (event.dataset: "zeek.conn" and network.transport: ("tcp" or "udp"))"""
+version = 1
+created_at = "2026-05-05T13:49:15.445Z"
+updated_at = "2026-05-07T21:08:01.312Z"
+
+[rule.index]
+indices = ["apm-*-transaction*", "auditbeat-*", "endgame-*", "filebeat-*", "logs-*", "packetbeat-*", "traces-apm*", "winlogbeat-*", "-*elastic-cloud-logs-*"]
+
+[rule.alert_suppression]
+group_by = ["destination.ip"]
+duration_value = 2
+duration_unit = "m"
+missing_fields_strategy = "suppress"
+
+[[rule.threat]]
+framework = "MITRE ATT&CK"
+
+[rule.threat.tactic]
+id = "TA0007"
+name = "Discovery"
+reference = "https://attack.mitre.org/tactics/TA0007/"
+
+[[rule.threat.technique]]
+id = "T1046"
+name = "Network Service Discovery"
+reference = "https://attack.mitre.org/techniques/T1046/"

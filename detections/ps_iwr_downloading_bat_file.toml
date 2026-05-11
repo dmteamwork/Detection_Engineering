@@ -1,0 +1,45 @@
+[rule]
+id = "647d89d3-6716-486f-a42e-990466ac17d7"
+rule_id = "51730758-b836-4400-8226-b59a4ab75c6c"
+name = "ps iwr downloading bat file"
+description = "pws iwr downloading bat file"
+enabled = false
+type = "query"
+language = "kuery"
+severity = "low"
+risk_score = 21
+interval = "5m"
+from = "now-10m"
+to = "now"
+max_signals = 100
+query = """event.dataset : "windows.sysmon_operational" and process.parent.name: powershell* and process.parent.command_line: *Invoke-WebRequest* and process.command_line: *.bat*"""
+version = 1
+created_at = "2026-05-05T13:48:15.340Z"
+updated_at = "2026-05-07T21:07:55.922Z"
+
+[rule.index]
+indices = ["apm-*-transaction*", "auditbeat-*", "endgame-*", "filebeat-*", "logs-*", "packetbeat-*", "traces-apm*", "winlogbeat-*", "-*elastic-cloud-logs-*"]
+
+[rule.alert_suppression]
+group_by = ["host.hostname"]
+duration_value = 5
+duration_unit = "m"
+missing_fields_strategy = "suppress"
+
+[[rule.threat]]
+framework = "MITRE ATT&CK"
+
+[rule.threat.tactic]
+id = "TA0002"
+name = "Execution"
+reference = "https://attack.mitre.org/tactics/TA0002/"
+
+[[rule.threat.technique]]
+id = "T1059"
+name = "Command and Scripting Interpreter"
+reference = "https://attack.mitre.org/techniques/T1059/"
+
+[[rule.threat.technique.subtechnique]]
+id = "T1059.001"
+name = "PowerShell"
+reference = "https://attack.mitre.org/techniques/T1059/001/"

@@ -1,0 +1,42 @@
+[rule]
+id = "dd804e46-907a-4a27-a1e3-44bea4a9fb89"
+rule_id = "0c4beb1a-e393-4605-a923-cbb7bc9d4298"
+name = "threshold logic"
+description = "trigger when there is more than 50 q"
+enabled = false
+type = "threshold"
+language = "kuery"
+severity = "medium"
+risk_score = 50
+interval = "2m"
+from = "now-4m"
+to = "now"
+max_signals = 100
+query = """  event.dataset: "zeek.http""""
+version = 1
+created_at = "2026-05-05T13:49:48.504Z"
+updated_at = "2026-05-07T21:07:58.291Z"
+
+[rule.index]
+indices = ["apm-*-transaction*", "auditbeat-*", "endgame-*", "filebeat-*", "logs-*", "packetbeat-*", "traces-apm*", "winlogbeat-*", "-*elastic-cloud-logs-*"]
+
+[rule.alert_suppression]
+duration_value = 1
+duration_unit = "m"
+
+[rule.threshold]
+value = 50
+field = ["source.ip", "destination.ip"]
+
+[[rule.threat]]
+framework = "MITRE ATT&CK"
+
+[rule.threat.tactic]
+id = "TA0007"
+name = "Discovery"
+reference = "https://attack.mitre.org/tactics/TA0007/"
+
+[[rule.threat.technique]]
+id = "T1046"
+name = "Network Service Discovery"
+reference = "https://attack.mitre.org/techniques/T1046/"

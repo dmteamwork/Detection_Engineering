@@ -1,0 +1,46 @@
+[rule]
+id = "1c7bba46-7fa8-4e64-8b12-e26fce5b2b99"
+rule_id = "ce1d2d30-eb26-4bca-b784-fb3359edfc12"
+name = "sus file added to reg"
+description = "sus file for registry persistence activity"
+enabled = false
+type = "query"
+language = "kuery"
+severity = "low"
+risk_score = 21
+interval = "5m"
+from = "now-10m"
+to = "now"
+max_signals = 100
+query = """event.dataset : "windows.sysmon_operational"
+and event.action : "RegistryEvent (Value Set)" and registry.key : *CurrentVersion\\Run* and registry.data.strings : *.ps1 and registry.path : *Microsoft\\Windows\\CurrentVersion\\Run*"""
+version = 1
+created_at = "2026-05-07T19:52:35.383Z"
+updated_at = "2026-05-07T21:08:01.678Z"
+
+[rule.index]
+indices = ["apm-*-transaction*", "auditbeat-*", "endgame-*", "filebeat-*", "logs-*", "packetbeat-*", "traces-apm*", "winlogbeat-*", "-*elastic-cloud-logs-*"]
+
+[rule.alert_suppression]
+group_by = ["host.hostname"]
+duration_value = 5
+duration_unit = "m"
+missing_fields_strategy = "suppress"
+
+[[rule.threat]]
+framework = "MITRE ATT&CK"
+
+[rule.threat.tactic]
+id = "TA0003"
+name = "Persistence"
+reference = "https://attack.mitre.org/tactics/TA0003/"
+
+[[rule.threat.technique]]
+id = "T1547"
+name = "Boot or Logon Autostart Execution"
+reference = "https://attack.mitre.org/techniques/T1547/"
+
+[[rule.threat.technique.subtechnique]]
+id = "T1547.001"
+name = "Registry Run Keys / Startup Folder"
+reference = "https://attack.mitre.org/techniques/T1547/001/"
