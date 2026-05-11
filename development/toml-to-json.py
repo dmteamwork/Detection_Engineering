@@ -2,7 +2,7 @@ import requests
 import os
 import tomllib
 
-url = "https://detectionengineering101.kb.us-central1.gcp.cloud.es.io/api/detection_engine/rules"
+url = "https://my-deployment-596fe6.kb.europe-west1.gcp.cloud.es.io/api/detection_engine/rules"
 api_key = os.environ['ELASTIC_KEY']
 headers = {
     'Content-Type': 'application/json;charset=UTF-8',
