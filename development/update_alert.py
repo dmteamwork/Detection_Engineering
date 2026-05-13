@@ -1,6 +1,3 @@
-update file new 
-
-
 import requests
 import os
 import tomllib
