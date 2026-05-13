@@ -3,7 +3,8 @@ import os
 import tomllib
 import json
 
-BASE_URL = "https://my-deployment-596fe6.kb.europe-west1.gcp.cloud.es.io"
+BASE_URL = "https://my-deployment-596fe6.kb.europe-west1.gcp.cloud.es.io/api/detection_engine/rules"
+
 api_key  = os.environ['ELASTIC_KEY']
 
 headers = {
@@ -12,7 +13,8 @@ headers = {
     "Content-Type": "application/json;charset=UTF-8"
 }
 
-RULES_URL = f"{BASE_URL}/api/detection_engine/rules"
+changed_files_raw = os.environ.get("CHANGED_FILES", "")
+changed_files = set(changed_files_raw.split())  
 
 
 def build_payload(rule: dict) -> dict | None:
@@ -64,11 +66,11 @@ def push_rule(payload: dict, filename: str):
     rule_id = payload.get("rule_id")
 
     # Try UPDATE first
-    put_res = requests.put(RULES_URL, headers=headers, json=payload)
+    put_res = requests.put(BASE_URL, headers=headers, json=payload)
 
     if put_res.status_code == 404:
         # Rule doesn't exist yet — CREATE it
-        post_res = requests.post(RULES_URL, headers=headers, json=payload)
+        post_res = requests.post(BASE_URL, headers=headers, json=payload)
         status   = post_res.status_code
         body     = post_res.json()
         action   = "CREATED"
@@ -93,6 +95,11 @@ for root, dirs, files in os.walk(detection_dir):
             continue
 
         full_path = os.path.join(root, file)
+        rel_path = os.path.relpath(full_path, detection_dir)
+         
+        if file not in changed_files and full_path not in changed_files:
+            continue
+
         print(f"\nProcessing: {file}")
 
         with open(full_path, "rb") as f:
