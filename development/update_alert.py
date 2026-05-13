@@ -14,6 +14,10 @@ headers = {
 
 RULES_URL = f"{BASE_URL}/api/detection_engine/rules"
 
+# ✅ Get changed files from GitHub Actions
+changed_files = os.environ.get("CHANGED_FILES", "")
+print("CHANGED_FILES:", changed_files)
+
 
 def build_payload(rule: dict) -> dict | None:
     rule_type = rule.get("type")
@@ -28,7 +32,7 @@ def build_payload(rule: dict) -> dict | None:
         "threat":      rule.get("threat", []),
         "author":      rule.get("author", []),
         "type":        rule_type,
-        "index":       rule.get("index", ["logs-*", "winlogbeat-*", "filebeat-*"]),
+        "index": rule.get("indices", rule.get("index", ["logs-*", "winlogbeat-*", "filebeat-*"])),
         "interval":    rule.get("interval", "5m"),
         "from":        rule.get("from", "now-6m"),
         "rule_id":     rule.get("rule_id"),
@@ -64,12 +68,11 @@ def push_rule(payload: dict, filename: str):
         print(f"  ❌ No rule_id found in {filename} — skipping")
         return
 
-    # ✅ FIXED: pass rule_id as query param in the URL
+    # ✅ FIXED: pass rule_id as query param
     put_url = f"{RULES_URL}?rule_id={rule_id}"
     put_res = requests.put(put_url, headers=headers, json=payload)
 
     if put_res.status_code == 404:
-        # Rule doesn't exist yet — CREATE it
         post_res = requests.post(RULES_URL, headers=headers, json=payload)
         status = post_res.status_code
         body   = post_res.json()
@@ -95,6 +98,11 @@ for root, dirs, files in os.walk(detection_dir):
             continue
 
         full_path = os.path.join(root, file)
+
+        # ✅ Skip files that were not changed
+        if file not in changed_files and full_path not in changed_files:
+            continue
+
         print(f"\nProcessing: {file}")
 
         with open(full_path, "rb") as f:
