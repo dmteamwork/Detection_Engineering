@@ -22,6 +22,15 @@ print("CHANGED_FILES:", changed_files)
 def build_payload(rule: dict) -> dict | None:
     rule_type = rule.get("type")
 
+    raw_index = rule.get("index", rule.get("indices", []))
+    if isinstance(raw_index, dict):
+        raw_index = list(raw_index.values())
+    elif isinstance(raw_index, str):
+        raw_index = [raw_index]
+    elif not isinstance(raw_index, list):
+        raw_index = ["logs-*", "winlogbeat-*", "filebeat-*"]
+
+
     base = {
         "name":        rule["name"],
         "description": rule.get("description", ""),
@@ -37,7 +46,7 @@ def build_payload(rule: dict) -> dict | None:
         "from":        rule.get("from", "now-6m"),
         "rule_id":     rule.get("rule_id"),
     }
-
+    
     if rule_type == "query":
         base.update({
             "query":    rule.get("query", ""),
