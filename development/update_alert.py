@@ -47,7 +47,7 @@ def build_payload(rule: dict) -> dict | None:
         "threat":      rule.get("threat", []),
         "author":      rule.get("author", []),
         "type":        rule_type,
-        "index": rule.get("indices", rule.get("index", ["logs-*", "winlogbeat-*", "filebeat-*"])),
+        "index": rule.get("indices", ["logs-*", "winlogbeat-*", "filebeat-*"]),
         "interval":    rule.get("interval", "5m"),
         "from":        rule.get("from", "now-6m"),
         "rule_id":     rule.get("rule_id"),
