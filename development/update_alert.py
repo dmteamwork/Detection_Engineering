@@ -13,9 +13,6 @@ headers = {
     "Content-Type": "application/json;charset=UTF-8"
 }
 
-changed_files_raw = os.environ.get("CHANGED_FILES", "")
-changed_files = set(changed_files_raw.split())  
-
 
 def build_payload(rule: dict) -> dict | None:
     rule_type = rule.get("type")
@@ -87,17 +84,24 @@ def push_rule(payload: dict, filename: str):
 
 
 # ── Main ──────────────────────────────────────────────────────────────────────
-detection_dir = "detections/"
+changed_files_raw = os.environ.get("CHANGED_FILES", "")
+changed_files = set(changed_files_raw.split())
+
+detection_dir = "detections"
+
+print("CHANGED_FILES:", changed_files)
 
 for root, dirs, files in os.walk(detection_dir):
     for file in files:
         if not file.endswith(".toml"):
             continue
 
-        full_path = os.path.join(root, file)
-        rel_path = os.path.relpath(full_path, detection_dir)
-         
-        if file not in changed_files and full_path not in changed_files:
+        full_path = os.path.join(root, file).replace("\\", "/")
+
+        print("Checking:", file, full_path)
+
+        if changed_files and file not in changed_files and full_path not in changed_files:
+            print("Skipping:", file)
             continue
 
         print(f"\nProcessing: {file}")
@@ -105,7 +109,7 @@ for root, dirs, files in os.walk(detection_dir):
         with open(full_path, "rb") as f:
             alert = tomllib.load(f)
 
-        rule    = alert["rule"]
+        rule = alert["rule"]
         payload = build_payload(rule)
 
         if payload:
