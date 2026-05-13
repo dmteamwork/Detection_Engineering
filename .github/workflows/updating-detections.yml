@@ -4,7 +4,7 @@ name: Updating Elastic Detections
 # Controls when the workflow will run
 on:
   push:
-    paths:
+    path:
       - '**.toml' 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
