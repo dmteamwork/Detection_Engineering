@@ -30,7 +30,7 @@ for root, dirs, files in os.walk("detections/"):
                     required_fields = ['author','description', 'name','rule_id','risk_score','severity','type','query','threshold','threat']
                 else:
                     print("Unsupported rule type found in: " + full_path)
-                    break
+                    continue
                 
                 for field in alert['rule']:
                     if field in required_fields:
