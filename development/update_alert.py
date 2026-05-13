@@ -22,13 +22,19 @@ print("CHANGED_FILES:", changed_files)
 def build_payload(rule: dict) -> dict | None:
     rule_type = rule.get("type")
 
-    raw_index = rule.get("index", rule.get("indices", []))
+    raw_index = rule.get("index", {})
+
+# Handle [rule.index] with nested "indices" key
     if isinstance(raw_index, dict):
-        raw_index = list(raw_index.values())
-    elif isinstance(raw_index, str):
+        raw_index = raw_index.get("indices", [])
+
+# Handle plain string
+    if isinstance(raw_index, str):
         raw_index = [raw_index]
-    elif not isinstance(raw_index, list):
-        raw_index = ["logs-*", "winlogbeat-*", "filebeat-*"]
+
+# Final fallback
+    if not raw_index:
+        raw_index = ["logs-*", "winlogbeat-*", "filebeat-*", "endgame-*"]
 
 
     base = {
