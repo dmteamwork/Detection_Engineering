@@ -100,14 +100,17 @@ for root, dirs, files in os.walk(detection_dir):
 
         full_path = os.path.join(root, file).replace("\\", "/")
 
-        print("Checking:", file, full_path)
+        # DEBUG — add these 3 lines
+        print(f"FILE: '{file}'")
+        print(f"FULL_PATH: '{full_path}'")
+        print(f"IN CHANGED: {file in changed_files} | {full_path in changed_files}")
 
         if changed_files and file not in changed_files and full_path not in changed_files:
-            print("Skipping:", file)
+            print(f"Skipping: {file}")
             continue
 
         print(f"\nProcessing: {file}")
-
+        
         with open(full_path, "rb") as f:
             alert = tomllib.load(f)
 
