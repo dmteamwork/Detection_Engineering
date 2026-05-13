@@ -57,30 +57,32 @@ def build_payload(rule: dict) -> dict | None:
         return None
 
     return base
-
+def get_existing_rule(rule_id: str):
+    res = requests.get(BASE_URL, headers=headers, params={"rule_id": rule_id})
+    if res.status_code == 200:
+        return res.json()
+    return None
 
 def push_rule(payload: dict, filename: str):
-    rule_id = payload.get("rule_id")
+    existing = get_existing_rule(payload["rule_id"])
 
-    # Try UPDATE first
-    put_res = requests.put(BASE_URL, headers=headers, json=payload)
-
-    if put_res.status_code == 404:
-        # Rule doesn't exist yet — CREATE it
-        post_res = requests.post(BASE_URL, headers=headers, json=payload)
-        status   = post_res.status_code
-        body     = post_res.json()
-        action   = "CREATED"
-    else:
-        status = put_res.status_code
-        body   = put_res.json()
+    if existing:
+        res = requests.put(BASE_URL, headers=headers, json=payload)
         action = "UPDATED"
-
-    if status in (200, 201):
-        print(f"  ✅ {action} [{payload['type']}] {filename} → {status}")
     else:
-        print(f"  ❌ FAILED {filename} → {status}")
-        print(f"     {json.dumps(body, indent=2)}")
+        res = requests.post(BASE_URL, headers=headers, json=payload)
+        action = "CREATED"
+
+    try:
+        body = res.json()
+    except Exception:
+        body = {"text": res.text}
+
+    if res.status_code in (200, 201):
+        print(f"  ✅ {action} [{payload['type']}] {filename} → {res.status_code}")
+    else:
+        print(f"  ❌ FAILED {filename} → {res.status_code}")
+        print(json.dumps(body, indent=2))
 
 
 # ── Main ──────────────────────────────────────────────────────────────────────
