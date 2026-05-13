@@ -28,10 +28,10 @@ def build_payload(rule: dict) -> dict | None:
         "threat":      rule.get("threat", []),
         "author":      rule.get("author", []),
         "type":        rule_type,
-        "index":       rule.get("index", ["*"]),
+        "index":       rule.get("index", ["logs-*", "winlogbeat-*", "filebeat-*"]),
         "interval":    rule.get("interval", "5m"),
         "from":        rule.get("from", "now-6m"),
-        "rule_id":     rule.get("rule_id"),   # needed for PUT
+        "rule_id":     rule.get("rule_id"),
     }
 
     if rule_type == "query":
@@ -39,20 +39,17 @@ def build_payload(rule: dict) -> dict | None:
             "query":    rule.get("query", ""),
             "language": rule.get("language", "kuery"),
         })
-
     elif rule_type == "eql":
         base.update({
             "query":    rule.get("query", ""),
             "language": "eql",
         })
-
     elif rule_type == "threshold":
         base.update({
             "query":     rule.get("query", ""),
             "language":  rule.get("language", "kuery"),
             "threshold": rule.get("threshold", {"field": [], "value": 1}),
         })
-
     else:
         print(f"  ⚠️  Unsupported rule type '{rule_type}' — skipping")
         return None
@@ -63,15 +60,20 @@ def build_payload(rule: dict) -> dict | None:
 def push_rule(payload: dict, filename: str):
     rule_id = payload.get("rule_id")
 
-    # Try UPDATE first
-    put_res = requests.put(RULES_URL, headers=headers, json=payload)
+    if not rule_id:
+        print(f"  ❌ No rule_id found in {filename} — skipping")
+        return
+
+    # ✅ FIXED: pass rule_id as query param in the URL
+    put_url = f"{RULES_URL}?rule_id={rule_id}"
+    put_res = requests.put(put_url, headers=headers, json=payload)
 
     if put_res.status_code == 404:
         # Rule doesn't exist yet — CREATE it
         post_res = requests.post(RULES_URL, headers=headers, json=payload)
-        status   = post_res.status_code
-        body     = post_res.json()
-        action   = "CREATED"
+        status = post_res.status_code
+        body   = post_res.json()
+        action = "CREATED"
     else:
         status = put_res.status_code
         body   = put_res.json()
@@ -85,7 +87,7 @@ def push_rule(payload: dict, filename: str):
 
 
 # ── Main ──────────────────────────────────────────────────────────────────────
-detection_dir = "/home/kali/Desktop/AttackS/toml/converted_detection"
+detection_dir = "detections/"
 
 for root, dirs, files in os.walk(detection_dir):
     for file in files:
