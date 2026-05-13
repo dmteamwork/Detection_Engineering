@@ -87,7 +87,7 @@ def push_rule(payload: dict, filename: str):
 
 
 # ── Main ──────────────────────────────────────────────────────────────────────
-detection_dir = "/home/kali/Desktop/AttackS/vs_code_toml_elastic/detection_engineering"
+detection_dir = "detections/"
 
 for root, dirs, files in os.walk(detection_dir):
     for file in files:
