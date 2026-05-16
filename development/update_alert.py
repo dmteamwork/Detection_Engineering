@@ -4,7 +4,7 @@ import tomllib
 import json
 
 BASE_URL = "https://my-deployment-596fe6.kb.europe-west1.gcp.cloud.es.io"
-api_key  = os.environ["ELASTIC_KEY"]
+api_key = "NHF5UkNwNEJTX3RNbGFPTFc1dEs6aDdmMnpmNUFzNXZWMUlUWEEzdG1jUQ=="
 
 headers = {
     "Authorization": f"ApiKey {api_key}",

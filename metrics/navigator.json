@@ -1,0 +1,87 @@
+{
+    "name": "Custom Detections",
+    "versions": {
+        "attack": "19",
+        "navigator": "4.8.2",
+        "layer": "4.4"
+    },
+    "domain": "enterprise-attack",
+    "description": "Auto-generated ATT&CK layer from detection-as-code pipeline",
+    "filters": {
+        "platforms": [
+            "Linux",
+            "macOS",
+            "Windows",
+            "Network",
+            "Containers",
+            "Office 365",
+            "SaaS",
+            "Google Workspace",
+            "IaaS",
+            "Azure AD"
+        ]
+    },
+    "sorting": 0,
+    "layout": {
+        "layout": "side",
+        "aggregateFunction": "average",
+        "showID": false,
+        "showName": true,
+        "showAggregateScores": false,
+        "countUnscored": false
+    },
+    "hideDisabled": false,
+    "techniques": [
+        {
+            "techniqueID": "T1020",
+            "tactic": "exfiltration",
+            "score": 1
+        },
+        {
+            "techniqueID": "T1046",
+            "tactic": "discovery",
+            "score": 2
+        },
+        {
+            "techniqueID": "T1082",
+            "tactic": "discovery",
+            "score": 1
+        },
+        {
+            "techniqueID": "T1217",
+            "tactic": "discovery",
+            "score": 1
+        },
+        {
+            "techniqueID": "T1059",
+            "tactic": "execution",
+            "score": 4
+        },
+        {
+            "techniqueID": "T1547",
+            "tactic": "persistence",
+            "score": 1
+        },
+        {
+            "techniqueID": "T1074",
+            "tactic": "collection",
+            "score": 1
+        }
+    ],
+    "gradient": {
+        "colors": [
+            "#ff6666ff",
+            "#ffe766ff",
+            "#8ec843ff"
+        ],
+        "minValue": 0,
+        "maxValue": 3
+    },
+    "legendItems": [],
+    "metadata": [],
+    "links": [],
+    "showTacticRowBackground": false,
+    "tacticRowBackground": "#dddddd",
+    "selectTechniquesAcrossTactics": true,
+    "selectSubtechniquesWithParent": false
+}

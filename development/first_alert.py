@@ -105,8 +105,7 @@ import tomllib
 import json
 
 BASE_URL = "https://my-deployment-596fe6.kb.europe-west1.gcp.cloud.es.io/api/detection_engine/rules"
-api_key  = os.environ['ELASTIC_KEY']
-
+api_key = "NHF5UkNwNEJTX3RNbGFPTFc1dEs6aDdmMnpmNUFzNXZWMUlUWEEzdG1jUQ=="
 headers = {
     "Authorization": f"ApiKey {api_key}",
     "kbn-xsrf": "true",
@@ -126,7 +125,7 @@ def build_payload(rule: dict) -> dict | None:
         "risk_score":  rule.get("risk_score", 50),
         "severity":    rule.get("severity", "low"),
         "tags":        rule.get("tags", []),
-        "threat":      rule.get("threat", []),
+
         "author":      rule.get("author", []),
         "type":        rule_type,
         "index": rule.get("index", {}).get("indices", ["*"]),

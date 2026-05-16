@@ -1,7 +1,7 @@
 import os
 import uuid
 import tomllib
-import tomli_w
+import tomli_w #pip install tomli-w
 
 detection_dir = "/home/kali/Desktop/AttackS/vs_code_toml_elastic/detection_engineering"
 
