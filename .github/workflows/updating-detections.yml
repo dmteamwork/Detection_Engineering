@@ -1,39 +1,28 @@
-# This is a basic workflow to help you get started with Actions
+name: Metrics
 
-name: Updating Elastic Detections
-# Controls when the workflow will run
 on:
-  push:
-    paths:
-      - 'detections/**.toml'
-  # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
+  schedule:
+    - cron: "0 0 * * FRI"
 
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # This workflow contains a single job called "build"
-  elastic-detections-update:
-    # The type of runner that the job will run on
+  metrics:
     runs-on: ubuntu-latest
-    env: 
-      ELASTIC_KEY: ${{ secrets.ELASTIC_KEY }}
-
-    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       - uses: actions/checkout@v6
         with:
-          fetch-depth: 0  # OR "2" -> To retrieve the preceding commit.
-
-      - name: Get changed files
-        id: changed-files
-        uses: tj-actions/changed-files@9426d40962ed5378910ee2e21d5f8c6fcbf2dd96 # v47.0.6
-      # NOTE: `since_last_remote_commit: true` is implied by default and falls back to the previous local commit.
-
-      - name: run update script
-        env:
-          ELASTIC_KEY: ${{ secrets.ELASTIC_KEY }}
-          CHANGED_FILES: ${{ steps.changed-files.outputs.all_changed_files }}
-        run: |
-          pip install requests
-          python development/update_alert.py
-
+          token: ${{ secrets.GH_KEY }}
+      - uses: actions/setup-python@v4 
+        with:
+          python-version: '3.11.4'
+      - run: pip install python-dateutil 
+      - run: python development/toml_to_report.py
+      - run: python development/toml_to_csv.py
+      - run: python development/toml_to_navigator.py
+      - run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add .
+          git commit -m "Updating Metrics"
+          git push -f
+      
