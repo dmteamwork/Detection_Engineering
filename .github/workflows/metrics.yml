@@ -3,7 +3,7 @@ name: Metrics
 on:
   workflow_dispatch:
   schedule:
-    - cron: "0 0 * * 5"
+    - cron: "0 0 * * FRI"
 
 permissions:
   contents: write
@@ -15,19 +15,32 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v4
         with:
-          python-version: '3.11'
+          python-version: '3.11.4'
 
-      - run: pip install python-dateutil
+      - name: Install dependencies
+        run: pip install python-dateutil
 
-      - run: python development/toml_to_navigator.py
+      - name: Generate reports
+        env:
+          ELASTIC_KEY: ${{ secrets.ELASTIC_KEY }}
+        run: |
+          python development/toml_to_navigator.py
 
-      - run: |
+      - name: Commit changes
+        run: |
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
+
           git add .
-          git diff --cached --quiet && exit 0
+
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+            exit 0
+          fi
+
           git commit -m "Updating Metrics"
 
-      - run: git push origin HEAD:main
+      - name: Push changes
+        run: git push origin HEAD:main
