@@ -54,19 +54,32 @@ for root, dirs, files in os.walk("detections/"):
             tactic = threat.get("tactic", {}).get("name", "none").lower()
 
             for tech in threat.get("technique", []):
-                technique_id = tech.get("id")
+                tech_id = tech.get("id")
 
-                if not technique_id:
+                if not tech_id:
                     continue
 
-                if technique_id not in techniques:
-                    techniques[technique_id] = {
-                        "techniqueID": technique_id,
+                # main technique
+                techniques[tech_id] = techniques.get(tech_id, {
+                    "techniqueID": tech_id,
+                    "tactic": tactic,
+                    "score": 0
+                })
+                techniques[tech_id]["score"] += 1
+
+                # subtechniques (IMPORTANT FIX)
+                for sub in tech.get("subtechnique", []):
+                    sub_id = sub.get("id")
+
+                    if not sub_id:
+                        continue
+
+                    techniques[sub_id] = techniques.get(sub_id, {
+                        "techniqueID": sub_id,
                         "tactic": tactic,
-                        "score": 1
-                    }
-                else:
-                    techniques[technique_id]["score"] += 1
+                        "score": 0
+                    })
+                    techniques[sub_id]["score"] += 1
 # =========================
 # 📊 BUILD NAVIGATOR JSON
 # =========================
